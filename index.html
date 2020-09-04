@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="water-dark.css">
+    <link rel="stylesheet" href="style.css" />
+
+    <style>
+        #frame {
+            width: 100%;
+            height: 100%;
+        }
+
+        .vken-fullscreen-button {
+            position: absolute;
+            display: inline-block;
+            right: 0;
+            bottom: 0px;
+            cursor: pointer;
+            transition: opacity 0.3s ease-out;
+            line-height: 1;
+            box-sizing: border-box;
+            margin: 0;
+            padding: 4px 14px;
+        }
+
+        #container {
+            --toc-font: 12px;
+        }
+
+        #container:fullscreen {
+            --toc-font: 14px;
+        }
+
+        div.toc-container {
+            width: 270px !important;
+
+        }
+        div.toc-container.hidden {
+            transform: translateX(270px) !important;
+        }
+
+        :fullscreen .toc-container {
+            width: 380px !important;
+
+        }
+        :fullscreen div.toc-container.hidden {
+            transform: translateX(380px) !important;
+        }
+
+    </style>
+</head>
+<body>
+    <div id="container" style="position: relative; width: 720px; height: 480px;">
+        <div id="frame" width="720" height="480">
+        </div>
+    </div>
+    <script>
+
+    var tag = document.createElement('script');
+    tag.src = "https://www.youtube.com/player_api";
+    var firstScriptTag = document.getElementsByTagName('script')[0];
+    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+    var player;
+    function get(n){return new Promise(function(e,t){var s=new XMLHttpRequest;s.open("GET",n,true),s.onload=function(){200===s.status?e({data:JSON.parse(s.response)}):t(null)},s.send(null)})}
+    _vkenVideoId = (new URLSearchParams(location.search)).get('video_id');
+    if(_vkenVideoId) {
+        function onYouTubePlayerAPIReady() {
+            _ytready = false;
+            window._player = new YT.Player("frame", {playerVars: {rel: 0}, videoId: _vkenVideoId});
+            window._player.addEventListener("onReady", function() {
+                _ytready = true;
+                if(typeof setupVkenControls === "function") setupVkenControls(window._player);
+            });
+        }
+
+        tocPromise = get('https://apiv3.videoken.com/api/v2/mmtocnew?youtube_id=' + _vkenVideoId);
+    }
+    </script>
+    <script src="app.js"></script>
+</body>
+</html>
